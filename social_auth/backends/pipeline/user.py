@@ -83,12 +83,12 @@ def update_user_details(backend, details, response, user, is_new=False, *args,
     signal_kwargs = {'sender': backend.__class__, 'user': user,
                      'response': response, 'details': details}
 
-    changed |= any(filter(signal_response, pre_update.send(**signal_kwargs)))
-
     # Fire socialauth_registered signal on new user registration
     if is_new:
         changed |= any(filter(signal_response,
                               socialauth_registered.send(**signal_kwargs)))
 
+    changed |= any(filter(signal_response, pre_update.send(**signal_kwargs)))
+    
     if changed:
         user.save()
